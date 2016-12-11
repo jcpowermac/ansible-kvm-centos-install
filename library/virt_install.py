@@ -3,15 +3,14 @@
 import sys
 sys.path.append('/usr/share/virt-manager/')
 sys.path.append('/usr/share/virt-manager/virtinst/')
-#import virt-install
 
+import atexit
 import imp
 import libvirt
 import virtinst
 from virtinst import cli
 from virtinst.cli import fail, print_stdout, print_stderr
 import argparse
-#import sys
 
 EXAMPLES = '''
     - name: virt-install CentOS
@@ -27,6 +26,11 @@ EXAMPLES = '''
           - 'ks=http://10.53.252.110:8000/ks.cfg ip=dhcp console=ttyS0,115200n8 serial'
         location: 'http://centos.mbni.med.umich.edu/mirror/7.2.1511/os/x86_64/'
 '''
+
+# This module is exiting somewhere without module.exit_json
+def onexit(module):
+    module.exit_json(changed=True, msg="This is the wrong way to exit" )
+
 
 def createoptions():
 
@@ -64,9 +68,12 @@ def createoptions():
                        test_media_detection=None, tpm=None, transient=False, uuid=None, vcpus=module.params['vcpus'], video=None,
                        vnc=False,
                        vnclisten=None, vncport=None, wait=None, watchdog=None, xmlonly=False, xmlstep=None)
-
+    atexit.register(onexit, module)
     return options, module
 
+# Using all the code from main() 
+# https://github.com/virt-manager/virt-manager/blob/master/virt-install
+# Added function to support ansible
 
 def main(conn=None):
     sys.path.append('/usr/share/virt-manager/')
@@ -90,14 +97,14 @@ def main(conn=None):
     cli.set_prompt(options.prompt)
 
     if cli.check_option_introspection(options):
-        return 0
+        module.exit_json(changed=True)
 
     if conn is None:
         conn = cli.getConnection(options.connect)
 
     if options.test_media_detection:
         vi.do_test_media_detection(conn, options.test_media_detection)
-        return 0
+        module.exit_json(changed=True)
 
     guest = vi.build_guest_instance(conn, options)
     if options.xmlonly or options.dry:
@@ -106,7 +113,7 @@ def main(conn=None):
             print_stdout(xml, do_force=True)
     else:
         vi.start_install(guest, options)
-
+    
     module.exit_json(changed=True)
 
 

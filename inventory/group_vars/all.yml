@@ -1,0 +1,20 @@
+---
+hostname: test
+domainname: virtomation.com
+kickstart_path: /tmp/ks/
+name: "test"
+disks: 
+  - 'path=/instances/test.qcow2,size=64'
+networks:
+  - 'network=ovsbr0,portgroup=vlan-252'
+extra_args:
+  - 'ks=http://10.53.252.110:8000/ks.cfg ip=dhcp console=ttyS0,115200n8 serial'
+location: 'http://centos.mbni.med.umich.edu/mirror/7.2.1511/os/x86_64/'
+
+
+# Not used
+instance_path: /instances
+base_image: "{{ instance_path }}/rhel.qcow2"
+quantity: 2 
+cleanup: true
+name_prefix: rhelops

@@ -4,7 +4,7 @@ timezone America/New_York --isUtc
 rootpw $1$7qCIhisq$JCialrLKPMISv9OayLVaE1 --iscrypted
 reboot
 text
-network --hostname replace.virtomation.com
+network --hostname {{ hostname }}.{{ domainname }} 
 url --mirrorlist='http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra'
 repo --name='CentOS-Updates' --mirrorlist='http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra'
 bootloader --location=mbr --append="crashkernel=auto"

@@ -1,0 +1,39 @@
+---
+- name: Create new CentOS virtual machine
+  hosts: kvm 
+  tasks: 
+    - name: Create Kickstart Directory
+      file:
+        path: "{{ kickstart_path }}"
+        state: directory
+
+    - name: Create Kickstart
+      template:
+        src: templates/centos7-ks.cfg.j2
+        dest: "{{ kickstart_path }}/ks.cfg"
+    
+    - name: Start Web server for kickstart
+      simplehttpserver:
+        port: 8000
+        path: "{{ kickstart_path }}"
+      async: 600
+      poll: 0
+      register: web
+
+    - name: virt-install CentOS
+      virt_install:
+        name: "{{ name }}" 
+        vcpus: 2
+        memory: 4096
+        location: "{{ location }}"
+        disks: "{{ disks }}"
+        networks: "{{ networks }}"
+        extra_args: "{{ extra_args }}"
+
+    - name: Check webserver
+      async_status:
+        jid: "{{ web.ansible_job_id }}"
+      register: job_result
+      until: job_result.finished
+      retries: 60
+      delay: 10
