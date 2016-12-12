@@ -1,0 +1,17 @@
+---
+- name: foo
+  hosts: localhost
+  vars:
+    releasever: 7
+  tasks:
+    - name: Find a Mirror
+      uri:
+        url: "http://mirrorlist.centos.org/?release={{ releasever }}&arch=x86_64&repo=os" 
+        return_content: True
+      register: mirrorlist
+
+    - debug:
+        var: mirrorlist
+
+    - debug:
+        msg: "{{ mirrorlist.content.split('\n')|random }}"
