@@ -19,12 +19,3 @@
   hosts: virtualmachines
   roles:
     - { role: virt-install }
-
-
-      #    - name: Check webserver
-      #      async_status:
-      #        jid: "{{ web.ansible_job_id }}"
-      #      register: job_result
-      #      until: job_result.finished
-      #      retries: 60
-      #      delay: 10
