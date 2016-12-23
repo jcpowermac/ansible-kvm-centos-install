@@ -8,7 +8,7 @@
 #### virt_install role
 
 1. Finds a CentOS mirror
-2. Create kickstart
+2. Create kickstart with update repo
 3. Uses virt_install module to create and start an instance
 4. Wait until the instance is in `shutdown` state (the kickstart template is configured to poweroff after installation is complete).
 
@@ -22,8 +22,8 @@
 3. Retrieve the general connection name from the default interface
 4. Use `nmcli` to configure the static ip.
 5. If `nmcli` fails:
-- Use ifcfg template
-- Reload the configuration and restart the device
+    - Use ifcfg template
+    - Reload the configuration and restart the device
 6. Wait for address change
 7. Set the `ansible_ssh_host` fact
 
