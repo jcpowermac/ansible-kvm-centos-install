@@ -1,37 +1,40 @@
 ---
-
-- name: Find a Mirror
+- name: find a centos mirror
   uri:
     url: "http://mirrorlist.centos.org/?release={{ releasever }}&arch=x86_64&repo=os" 
     return_content: True
   register: mirrorlist
 
-- name: Create Kickstart Directory
+- name: create kickstart directory
   file:
     path: "{{ kickstart_path }}"
     state: directory
 
-- name: Create Kickstart
+- name: create kickstart
   template:
     src: ks.cfg.j2
     dest: "{{ kickstart_path }}/{{ name }}.cfg"
 
-- name: "Virt Install {{ name }}"
+- name: "virt-install {{ name }}"
   virt_install:
     name: "{{ name }}" 
     vcpus: 2
     memory: 4096
-    location: "{{ mirrorlist.content.split('\n')|random }}" 
+    location: "{{ mirrorlist.content.split('\n') | random }}" 
     disks: "{{ disks }}"
     networks: "{{ networks }}"
     extra_args: "{{ extra_args }}"
 
-
-- name: "Wait Until {{ name }} Powers Off" 
+- name: "wait until {{ name }} to power off" 
   virt:
     name: "{{ name }}"
     command: status
   register: result
-  until: result.status.find("shutoff") != -1
+  until: result.status.find("shutdown") != -1
   retries: 60
   delay: 30
+
+- name: "power {{ name }} on"
+  virt:
+    name: "{{ name }}"
+    command: start

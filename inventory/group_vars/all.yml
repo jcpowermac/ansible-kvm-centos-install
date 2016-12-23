@@ -1,9 +1,13 @@
 ---
-
-
 kickstart_path: /tmp/ks/
 webserver_port: 8000
-# Not used
+site_password: password 
+dns1: 8.8.4.4
+dns2: 8.8.8.8
+
+
+# Not used in this release
+
 #instance_path: /instances
 #base_image: "{{ instance_path }}/rhel.qcow2"
 #quantity: 2 

@@ -1,0 +1,56 @@
+---
+- name: install needed network manager libs
+  yum:
+    name: '{{ item }}'
+    state: installed
+  with_items:
+    - NetworkManager-glib
+    - nm-connection-editor.x86_64
+    - libsemanage-python
+    - policycoreutils-python
+
+- name: Add deployment node SSH key to node authorized users
+  authorized_key:
+    user: root
+    key: "{{ lookup('file', sshkey_path ) }}"  
+
+- name: Retrieve general connection for interface
+  command: "nmcli -t -f GENERAL.CONNECTION d show {{ ansible_default_ipv4.interface }}"
+  register: connection
+
+- block:
+   - name: Reconfigure network with static IP address
+     nmcli:
+       conn_name: "{{ connection.stdout.split(':')[1] }}"
+       ip4: "{{ ipv4 | ipaddr }}"
+       gw4: "{{ ansible_default_ipv4.gateway }}"
+       dns4: "{{ dns_servers }}"
+       state: present  
+     register: ip_config
+  rescue:
+   - name: Reconfigure node with static IP address
+     template:
+       src: ifcfg_default.j2
+       dest: "{{ network_config_path }}"
+     register: ip_config
+
+   - name: reload connection
+     shell: "sleep 2 && nmcli connection reload && nmcli device disconnect {{ ansible_default_ipv4.interface }} && nmcli device connect {{ ansible_default_ipv4.interface }}"
+     async: 1
+     poll: 0
+     when: ip_config.changed
+  always:  
+   - name: Wait for IP reconfig
+     local_action:
+       module: wait_for
+       host: "{{ ip_address }}"
+       port: 22
+       state: started
+     when: ip_config.changed
+
+- name: Set facts for the next task
+  set_fact:
+    ansible_ssh_host: "{{ ip_address }}"
+  when: ip_config.changed
+
+

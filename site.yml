@@ -1,21 +1,37 @@
 ---
-- name: Enable Web Server on KVM host
+- name: enable web server on kvm host
   hosts: kvm 
+  gather_facts: True 
   tasks: 
-    - name: Create Kickstart Directory
-      file:
-        path: "{{ kickstart_path }}"
-        state: directory
-
-    - name: Start Web Server for Kickstarts
+    - name: start web server for kickstart files
       simplehttpserver:
         port: "{{ webserver_port }}" 
         path: "{{ kickstart_path }}"
       async: 600
       poll: 0
-      register: web
 
-- name: Create Virtual Machines
+- name: create virtual machines
   hosts: virtualmachines
+  gather_facts: False 
+  max_fail_percentage: 0
+  vars:
+    ks_ip_address: "{{ hostvars['kvm']['ansible_default_ipv4']['address'] }}"
   roles:
-    - { role: virt-install }
+    - virt_install
+    - virt_ipaddress
+
+    #- name: confirm node install complete
+    #  hosts: virtualmachines 
+    #  gather_facts: False
+    #  max_fail_percentage: 0
+    #  roles:
+    #    - virt_ipaddress
+    #
+- name: post-install configuration
+  hosts: virtualmachines
+  gather_facts: True
+  max_fail_percentage: 0
+  vars:
+    ansible_ssh_pass: "{{ site_password }}"
+  roles:
+    - configure_static_ip

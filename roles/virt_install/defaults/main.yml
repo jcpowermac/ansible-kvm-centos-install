@@ -3,5 +3,5 @@
 
 releasever: 7
 extra_args:
-    - "ks=http://{{ ansible_default_ipv4.address }}:{{ webserver_port }}/{{ name }}.cfg ip=dhcp console=ttyS0,115200n8 serial"
+    - "ks=http://{{ ks_ip_address }}:{{ webserver_port }}/{{ name }}.cfg ip=dhcp console=ttyS0,115200n8 serial"
 location: 'http://centos.mbni.med.umich.edu/mirror/7.2.1511/os/x86_64/'

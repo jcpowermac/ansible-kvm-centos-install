@@ -1,0 +1,10 @@
+---
+# defaults file for configure_static_ip
+network_config_path: "/etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}"
+sshkey_path: "/home/jcallen/.ssh/id_rsa.pub"
+
+ipv4: "{{ ip_address }}/{{ ansible_default_ipv4.netmask }}"
+
+dns_servers:
+  - "{{ dns1 }}"
+  - "{{ dns2 }}"

@@ -1,0 +1,10 @@
+DEVICE={{ ansible_default_ipv4.interface }}
+BOOTPROTO=none
+IPADDR={{ ip_address }}
+NETMASK={{ ansible_default_ipv4.netmask }}
+GATEWAY={{ ansible_default_ipv4.gateway }}
+HWADDR={{ ansible_default_ipv4.macaddress }}
+DEFROUTE=yes
+ONBOOT=yes
+DNS1={{ dns1 }}
+DNS2={{ dns2 }}

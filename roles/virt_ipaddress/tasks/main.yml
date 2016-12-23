@@ -1,0 +1,19 @@
+---
+# tasks file for virt_ipaddress
+- name: retrieve ip address
+  virt_ipaddress:
+    name: "{{ inventory_hostname }}" 
+    device: "eth0"
+  register: guest
+  until: guest | success
+  retries: 6
+  delay: 10
+  delegate_to: kvm
+  ignore_errors: True
+
+- name: Set correct IP Address to run tasks
+  set_fact:
+    ansible_ssh_host: "{{ guest.ansible_virt_ipv4 }}"
+
+- debug:
+    msg: "{{ guest.ansible_virt_ipv4 }}"

@@ -1,9 +1,0 @@
----
-
-hostname: aos-node2 
-domainname: virtomation.com
-name: "{{ hostname }}"
-disks: 
-  - 'path=/instances/{{ name }}.qcow2,size=64'
-networks:
-  - 'network=ovsbr0,portgroup=vlan-252'
