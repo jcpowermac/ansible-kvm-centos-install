@@ -48,9 +48,9 @@
        state: started
      when: ip_config.changed
 
-- name: Set facts for the next task
-  set_fact:
-    ansible_ssh_host: "{{ ip_address }}"
-  when: ip_config.changed
+   - name: Set facts for the next task
+     set_fact:
+       ansible_ssh_host: "{{ ip_address }}"
+     when: ip_config.changed
 
 

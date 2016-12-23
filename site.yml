@@ -20,13 +20,6 @@
     - virt_install
     - virt_ipaddress
 
-    #- name: confirm node install complete
-    #  hosts: virtualmachines 
-    #  gather_facts: False
-    #  max_fail_percentage: 0
-    #  roles:
-    #    - virt_ipaddress
-    #
 - name: post-install configuration
   hosts: virtualmachines
   gather_facts: True
