@@ -1,0 +1,6 @@
+---
+# vars file for redirect_on_write
+
+image_path: "{{ instance_path }}/{{ name }}.qcow2"
+backing_disks:
+  - "{{ image_path }},cache=none"

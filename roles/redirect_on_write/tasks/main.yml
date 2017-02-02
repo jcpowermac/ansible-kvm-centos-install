@@ -1,0 +1,16 @@
+---
+- name: Create backing image
+  command: "qemu-img create -f qcow2 -b {{ redirect_on_write_image }} {{ image_path}}"
+
+- name: "virt-install {{ name }}"
+  virt_install:
+    name: "{{ name }}" 
+    vcpus: "{{ vcpus }}" 
+    memory: "{{ memory }}"
+    disks: "{{ backing_disks }}"
+    networks: "{{ networks }}"
+    import_install: True
+    os_variant: "{{ os_variant }}"
+    wait: 0
+
+

@@ -2,28 +2,37 @@
 - name: enable web server on kvm host
   hosts: kvm 
   gather_facts: True 
+  roles:
+    - simplehttpserver
   tasks: 
     - name: start web server for kickstart files
       simplehttpserver:
         port: "{{ webserver_port }}" 
         path: "{{ kickstart_path }}"
-      async: 600
+      async: 1200
       poll: 0
 
 - name: create virtual machines
   hosts: virtualmachines
-  gather_facts: False 
-  max_fail_percentage: 0
+  gather_facts: True 
+  serial: 3
   vars:
     ks_ip_address: "{{ hostvars['kvm']['ansible_default_ipv4']['address'] }}"
   roles:
-    - virt_install
+    - role: redirect_on_write
+      when: redirect_on_write
+    - role: virt_install
+      when: redirect_on_write is undefined or not redirect_on_write
+
+- name: wait for dhcp address
+  hosts: virtualmachines
+  gather_facts: False
+  roles:
     - virt_ipaddress
 
 - name: post-install configuration
   hosts: virtualmachines
   gather_facts: True
-  max_fail_percentage: 0
   vars:
     ansible_ssh_pass: "{{ site_password }}"
   roles:

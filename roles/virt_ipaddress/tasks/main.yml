@@ -1,5 +1,10 @@
 ---
-# tasks file for virt_ipaddress
+- name: "power {{ inventory_hostname }} on"
+  virt:
+    name: "{{ inventory_hostname }}"
+    command: start
+  when: redirect_on_write is not defined or not redirect_on_write
+
 - name: retrieve ip address
   virt_ipaddress:
     name: "{{ inventory_hostname }}" 
@@ -15,5 +20,13 @@
   set_fact:
     ansible_ssh_host: "{{ guest.ansible_virt_ipv4 }}"
 
-- debug:
-    msg: "{{ guest.ansible_virt_ipv4 }}"
+# the machine might have received an address but    
+- name: Wait for ssh to be available
+  local_action: 
+    module: wait_for 
+    host: "{{ ansible_ssh_host }}" 
+    state: started
+    port: 22
+    delay: 30
+    connect_timeout: 15
+    timeout: 300

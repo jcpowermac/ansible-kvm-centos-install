@@ -1,0 +1,14 @@
+---
+- name: wait for dhcp address
+  hosts: virtualmachines
+  gather_facts: False
+  roles:
+    - virt_ipaddress
+
+- name: post-install configuration
+  hosts: virtualmachines
+  gather_facts: True
+  vars:
+    ansible_ssh_pass: "{{ site_password }}"
+  roles:
+    - configure_static_ip

@@ -8,6 +8,7 @@
     - nm-connection-editor.x86_64
     - libsemanage-python
     - policycoreutils-python
+  ignore_errors: True
 
 - name: add deployment node SSH key to node authorized users
   authorized_key:

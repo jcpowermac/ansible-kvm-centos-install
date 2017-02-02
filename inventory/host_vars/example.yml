@@ -1,9 +1,16 @@
 ---
-ip_address: 10.0.0.10
-hostname: example-node 
+ip_address: 10.53.250.5
+hostname: example 
 domainname: example.com
 name: "{{ hostname }}"
+
+vcpus: 2
+memory: 4096
+disk_size: 64
+redirect_on_write: True
+
+os_variant: "centos7.0"
 disks: 
-  - 'path=/instances/{{ name }}.qcow2,size=64'
+  - "path={{ instance_path }}/{{ name }}.qcow2,size={{ disk_size }}"
 networks:
-  - 'network=ovsbr0,portgroup=vlan-10'
+  - 'network=ovsbr0,portgroup=vlan-250,model=virtio'

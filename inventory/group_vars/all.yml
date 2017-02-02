@@ -1,15 +1,20 @@
 ---
 kickstart_path: /tmp/ks/
 webserver_port: 8000
-site_password: password 
+site_password: wileyfuse 
 dns1: 8.8.4.4
 dns2: 8.8.8.8
 
+redirect_on_write_name: "original-{{ ansible_date_time.epoch }}"
 
-# Not used in this release
+instance_path: "/nvme/"
 
-#instance_path: /instances
-#base_image: "{{ instance_path }}/rhel.qcow2"
-#quantity: 2 
-#cleanup: true
-#name_prefix: rhelops
+redirect_on_write_image: "{{ instance_path }}/{{ redirect_on_write_name }}.qcow2"
+
+mirror_list:
+  - http://mirrors.cmich.edu/centos/7.3.1611/os/x86_64/
+  - http://mirrors.liquidweb.com/CentOS/7.3.1611/os/x86_64/
+  - http://centos.mbni.med.umich.edu/mirror/7.3.1611/os/x86_64/
+  - http://mirrors.umflint.edu/CentOS/7.3.1611/os/x86_64/
+  - http://mirror.sesp.northwestern.edu/centos/7.3.1611/os/x86_64/
+  - http://bay.uchicago.edu/centos/7.3.1611/os/x86_64/

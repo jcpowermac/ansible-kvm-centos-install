@@ -1,9 +1,9 @@
 ---
-- name: find a centos mirror
-  uri:
-    url: "http://mirrorlist.centos.org/?release={{ releasever }}&arch=x86_64&repo=os" 
-    return_content: True
-  register: mirrorlist
+#- name: find a centos mirror
+#  uri:
+  #    url: "http://mirrorlist.centos.org/?release={{ releasever }}&arch=x86_64&repo=os" 
+  #   return_content: True
+  #register: mirrorlist
 
 - name: create kickstart directory
   file:
@@ -20,9 +20,13 @@
     name: "{{ name }}" 
     vcpus: 2
     memory: 4096
-    location: "{{ mirrorlist.content.split('\n') | random }}" 
+    #vcpus: "{{ vcpus }}"
+    #memory: "{{ memory }}"
+    #location: "{{ mirrorlist.content.split('\n') | random }}" 
+    location: "{{ mirror_list | random }}" 
     disks: "{{ disks }}"
     networks: "{{ networks }}"
+    #    os_variant: "{{ os_variant }}"
     extra_args: "{{ extra_args }}"
 
 - name: "wait until {{ name }} to power off" 
@@ -33,8 +37,3 @@
   until: result.status.find("shutdown") != -1
   retries: 60
   delay: 30
-
-- name: "power {{ name }} on"
-  virt:
-    name: "{{ name }}"
-    command: start
