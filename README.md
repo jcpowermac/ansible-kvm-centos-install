@@ -26,9 +26,3 @@
     - Reload the configuration and restart the device
 6. Wait for address change
 7. Set the `ansible_ssh_host` fact
-
-
-
-
-
-Eventually will create ansible module and playbook to do this.
